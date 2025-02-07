@@ -1,0 +1,29 @@
+{
+  "name": "coursecdocify-backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manthan-Gohil/CourseDocify.git"
+  },
+  "keywords": [],
+  "author": "Manthan Gohil",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Manthan-Gohil/CourseDocify/issues"
+  },
+  "description": "This is the backend of the project coursecdocify",
+  "homepage": "https://github.com/Manthan-Gohil/CourseDocify#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.10.0",
+    "nodemon": "^3.1.9"
+  }
+}
