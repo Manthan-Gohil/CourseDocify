@@ -3,14 +3,27 @@ import fs from "fs";
 
 export const generatePDF = (content, filePath) => {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument();
-    const stream = fs.createWriteStream(filePath);
+    try {
+      const doc = new PDFDocument();
 
-    doc.pipe(stream);
-    doc.fontSize(12).text(content, { align: "left" });
+      // ✅ Use a built-in font (avoid missing font issue)
+      doc.font("Times-Roman");
 
-    doc.end();
-    stream.on("finish", () => resolve());
-    stream.on("error", (error) => reject(error));
+      // ✅ Ensure correct text format
+      doc.text(content, { align: "left" });
+
+      const writeStream = fs.createWriteStream(filePath);
+      doc.pipe(writeStream);
+
+      doc.end();
+
+      writeStream.on("finish", () => {
+        console.log("PDF Generated Successfully:", filePath);
+        resolve();
+      });
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      reject(error);
+    }
   });
 };

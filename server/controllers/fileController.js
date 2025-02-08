@@ -61,6 +61,19 @@ export const generateCourseFile = async (req, res) => {
   }
 };
 
+export const getUploadedFiles = async (req, res) => {
+  try {
+    const files = await File.find({ uploadedBy: req.user?._id }); // Fetch only user files
+
+    // console.log("Fetched files from DB:", files); // ✅ Check if files are fetched
+
+    return res.status(200).json({ success: true, files });
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 // Function to download course file
 export const downloadCourseFile = (req, res) => {
   try {
