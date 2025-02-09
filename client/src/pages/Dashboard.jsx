@@ -16,23 +16,22 @@ const Dashboard = () => {
       const data = await fetchFiles();
       setFiles(data.files);
     } catch (error) {
-        toast.error("Failed to load files.", { id: "file-error" }); // Prevent duplicate toast
-      
+      toast.error("Failed to load files.", { id: "file-error" });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadFiles(); // ✅ Only one API call when Dashboard mounts
+    loadFiles();
   }, []);
 
   return (
     <div>
       <Navbar />
       <div className="container mx-auto p-4">
-        <FileUpload onUploadSuccess={loadFiles} /> 
-        <FileTable files={files} loading={loading} onDeleteSuccess={loadFiles} />
+        {/* <FileUpload onUploadSuccess={loadFiles} /> */}
+        <FileTable files={files} loading={loading} />
       </div>
     </div>
   );

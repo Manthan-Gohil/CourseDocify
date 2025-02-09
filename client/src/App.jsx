@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/Authcontext";
+import Upload from "./pages/Upload";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/upload" element={<Upload/>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
