@@ -27,13 +27,13 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen w-full bg-[#f5f5f5]">
       <Navbar />
       <div className="container mx-auto p-4">
         {/* <FileUpload onUploadSuccess={loadFiles} /> */}
         <FileTable files={files} loading={loading} />
       </div>
-    </div>
+      </div>
   );
 };
 

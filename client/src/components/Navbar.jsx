@@ -12,15 +12,15 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-600 p-4 text-white flex justify-between">
-      <div className="text-xl font-bold">
-        <Link to="/">Course File Generator</Link>
+    <nav className="p-4 text-black flex justify-between shadow-md">
+      <div className="text-2xl font-medium">
+        <Link to="/">CourseDocify</Link>
       </div>
       <div>
         {isAuthenticated ? (
           <>
             <Link to="/upload" className="mr-4">Upload Files</Link>
-            <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded">
+            <button onClick={handleLogout} className="bg-[#060606] text-white px-3 py-1 rounded">
               Logout
             </button>
           </>

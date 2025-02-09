@@ -35,10 +35,10 @@ const FileTable = () => {
       {Array.isArray(files) && files.length > 0 ? (
         <ul>
           {files.map((file) => (
-            <li key={file._id} className="p-2 border-1 flex justify-between mt-2">
+            <li key={file._id} className="p-2 border-1 rounded-sm flex justify-between mt-2">
               {file.filename}
               <button
-                className="bg-blue-500 cursor-pointer px-2 py-1 rounded text-white"
+                className="bg-white text-[#060606] border border-black cursor-pointer px-2 py-1 rounded"
                 onClick={() => handleDownload(file._id, file.filename)}
               >
                 Download
