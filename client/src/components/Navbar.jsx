@@ -20,7 +20,7 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <Link to="/upload" className="mr-4">Upload Files</Link>
-            <button onClick={handleLogout} className="bg-[#060606] text-white px-3 py-1 rounded">
+            <button onClick={handleLogout} className="bg-[#060606] text-white px-3 py-1 rounded cursor-pointer">
               Logout
             </button>
           </>

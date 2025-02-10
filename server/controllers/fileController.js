@@ -121,10 +121,14 @@ import fs from "fs";
 
 export const getFiles = async (req, res) => {
   try {
-    const files = await File.find();
-    res.status(200).json({ files });
+    const files = await File.find({ uploadedBy: req.user?._id }); // Fetch only user files
+
+    // console.log("Fetched files from DB:", files); // ✅ Check if files are fetched
+
+    return res.status(200).json({ success: true, files });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch files" });
+    console.error("Error fetching files:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
