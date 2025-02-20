@@ -40,7 +40,7 @@ const Register = () => {
             </div>
 
             <div className="h-full w-1/2 bg-[#f5f5f5] flex flex-col px-20 py-10 justify-between ">
-                <h1 className="text-xl text-[#060606] font-semibold">CourseDocify</h1>
+                <h1 className="text-3xl text-[#060606] font-semibold">CourseDocify</h1>
 
                 <div className="w-full flex flex-col max-w-[450px]">
                     <div className="w-full flex flex-col mb-5">
@@ -79,24 +79,13 @@ const Register = () => {
 
                         <div className="w-full flex flex-col my-4">
                             <button type="submit" className="w-full text-white my-2 font-semibold bg-[#060606] rounded-md p-3 text-center flex items-center justify-center cursor-pointer">
-                                SIGN UP
+                                Register
                             </button>
                         </div>
                     </form>
 
-                    <div className="w-full flex items-center justify-center relative py-2">
-                        <div className="w-full h-[1px] bg-black"></div>
-                        <p className="text-lg absolute text-black/40 bg-[#f5f5f5] ">or</p>
-                    </div>
 
-                    <div className="w-full text-sm text-[#060606] my-4 font-semibold bg-white border border-black rounded-md p-3 text-center flex items-center justify-center">
-                        <img
-                            src="https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/google-color.png"
-                            alt="Google Login Icon"
-                            className="h-4 mr-2"
-                        />
-                        Sign In With Google
-                    </div>
+                    
                 </div>
 
                 <div className="w-full flex items-center justify-center">
