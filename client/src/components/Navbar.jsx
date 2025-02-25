@@ -19,14 +19,23 @@ const Navbar = () => {
       <div>
         {isAuthenticated ? (
           <>
-            <Link to="/upload" className="mr-4">Upload Files</Link>
-            <button onClick={handleLogout} className="bg-[#060606] text-white px-3 py-1 rounded cursor-pointer">
+                <Link to={"/course-details"}> <button className=" bg-green-400 px-3 py-1 cursor-pointer rounded-sm mr-4">Course info</button></Link>
+
+            <Link to="/upload" className="mr-4">
+              Upload Files
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-[#060606] text-white px-3 py-1 rounded cursor-pointer"
+            >
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="mr-4">Login</Link>
+            <Link to="/login" className="mr-4">
+              Login
+            </Link>
             <Link to="/register">Register</Link>
           </>
         )}

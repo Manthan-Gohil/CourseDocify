@@ -1,7 +1,5 @@
-// pages/Dashboard.jsx
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import FileUpload from "../components/FileUpload";
 import FileTable from "../components/FileTable";
 import { fetchFiles } from "../services/fileServices";
 import toast from "react-hot-toast";
@@ -30,10 +28,9 @@ const Dashboard = () => {
     <div className="min-h-screen w-full bg-[#f5f5f5]">
       <Navbar />
       <div className="container mx-auto p-4">
-        {/* <FileUpload onUploadSuccess={loadFiles} /> */}
         <FileTable files={files} loading={loading} />
       </div>
-      </div>
+    </div>
   );
 };
 

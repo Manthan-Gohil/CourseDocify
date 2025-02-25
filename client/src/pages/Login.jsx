@@ -23,7 +23,7 @@ const Login = () => {
     try {
       const response = await login(user.email, user.password);
       toast.success(response.message); // Only one toast now
-      navigate("/");
+      navigate("/course-details");
     } catch (error) {
       toast.error(error.message);
     }

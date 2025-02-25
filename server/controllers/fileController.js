@@ -188,10 +188,11 @@ export const downloadFile = async (req, res) => {
     // Find file in database
     const file = await File.findById(fileId);
     if (!file) {
-      return res.status(404).json({ success: false, message: "File not found" });
+      return res.status(404).json({ success: false, message: "File not found in database" });
     }
 
-    const filePath = path.resolve(file.filePath);
+    // Construct absolute file path correctly
+    const filePath = path.join(process.cwd(), "uploads", file.filename); // Ensure it points to ./uploads
 
     // Check if file exists in storage
     if (!fs.existsSync(filePath)) {

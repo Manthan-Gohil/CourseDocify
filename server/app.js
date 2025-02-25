@@ -5,7 +5,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import authRoutes from "./routes/authRoutes.js"; // Authentication routes
 import fileRoutes from "./routes/fileRoutes.js"; // File upload and processing routes
-
+import courseRoutes from "./routes/courseRoutes.js"
 const app = express()
 
 dotenv.config()
@@ -23,6 +23,7 @@ app.use(cookieParser()); // Enable reading/writing cookies
 // Routes
 app.use("/api/auth", authRoutes); // Authentication routes
 app.use("/api/files", fileRoutes); // File upload and processing routes
+app.use("/api/course", courseRoutes);
 
 const PORT = process.env.PORT || 3000
 
