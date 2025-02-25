@@ -26,14 +26,14 @@ doc.image("public/logo.png", 50, 30, { width: 100 });
 
 // Center "Course Details" text on the same line as the logo
 doc
-  .fontSize(22)
+  .fontSize(28)
   .fillColor("#1D3557") // Dark blue color
-  .text("Course Details", { align: "center", baseline: "middle" })
-  .moveDown(2);
+  .text("Course Details", { align: "center", baseline: "middle", underline: true })
+  .moveDown(3);
 
 // Move content to the center of the page
 doc
-  .fontSize(16)
+  .fontSize(20)
   .fillColor("black")
   .text(`Course Name: ${courseName}`, { align: "center" })
   .moveDown(1) // Adds space between lines
