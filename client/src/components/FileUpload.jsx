@@ -3,27 +3,53 @@ import { uploadFiles } from "../services/fileServices";
 import toast from "react-hot-toast";
 
 const FileUpload = ({ onUploadSuccess }) => {
-  const [files, setFiles] = useState([]); // ✅ Handle multiple files
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+
+  const categories = [
+    "Time Table",
+    "Course Content/Syllabus",
+    "Course Description and Objective",
+    "Course Learning Outcomes & CO Mapping",
+    "Detailed Session Plan",
+    "Registered Student List",
+    "Attendance",
+  ];
 
   const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files)); // ✅ Store multiple files in state
+    if (!selectedCategory) {
+      toast.error("Please select a category first!");
+      return;
+    }
+
+    const newFiles = Array.from(e.target.files).map((file) => ({
+      file,
+      category: selectedCategory,
+    }));
+
+    setSelectedFiles([...selectedFiles, ...newFiles]);
   };
 
   const handleUpload = async () => {
-    if (files.length === 0) {
+    if (selectedFiles.length === 0) {
       toast.error("Please select at least one file.");
       return;
     }
 
     try {
       setUploading(true);
-      const response = await uploadFiles(files); // ✅ Send multiple files
-      toast.success(response.message);
-      setFiles([]); // ✅ Clear selected files after upload
-      onUploadSuccess(); // ✅ Refresh file list after upload
+      const filesToUpload = selectedFiles.map((item) => item.file);
+      const response = await uploadFiles(filesToUpload);
+      setUploadedFiles([...uploadedFiles, ...response.uploadedFiles]);
+
+      toast.success("Files uploaded successfully!");
+      setSelectedFiles([]);
+      onUploadSuccess(response.uploadedFiles);
     } catch (error) {
-      toast.error(error.message);
+      toast.error("Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -31,7 +57,35 @@ const FileUpload = ({ onUploadSuccess }) => {
 
   return (
     <div className="p-4 border rounded shadow-md">
+      <label className="block mb-2 font-bold">Select Category</label>
+      <select
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+        className="w-full border p-2 mb-2"
+      >
+        <option value="">-- Select --</option>
+        {categories.map((category, index) => (
+          <option key={index} value={category}>
+            {category}
+          </option>
+        ))}
+      </select>
+
       <input type="file" onChange={handleFileChange} multiple className="mb-2" />
+
+      {selectedFiles.length > 0 && (
+        <div className="mb-2">
+          <h4 className="font-bold">Selected Files:</h4>
+          <ul>
+            {selectedFiles.map((fileObj, index) => (
+              <li key={index}>
+                {fileObj.file.name} ({fileObj.category})
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <button
         onClick={handleUpload}
         disabled={uploading}

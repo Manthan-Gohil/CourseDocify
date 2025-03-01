@@ -1,130 +1,16 @@
-// import fs from "fs";
-// import path from "path";
 import { processFiles } from "../utils/fileProcessor.js";
 import { generatePDF } from "../utils/pdfGenerator.js";
-// import { File } from "../models/File.js"; // Ensure you import File model
-// import mongoose from 'mongoose'
-
-const UPLOADS_DIR = "./uploads";
-
-// // Ensure uploads folder exists
-// if (!fs.existsSync(UPLOADS_DIR)) {
-//   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-// }
-
-// // Function to generate course file
-// export const generateCourseFile = async (req, res) => {
-//   try {
-//     const uploadedFiles = req.files;
-//     const userId = req.user?._id; // Ensure user is authenticated
-
-//     if (!uploadedFiles || uploadedFiles.length === 0) {
-//       return res.status(400).json({ success: false, message: "No files uploaded" });
-//     }
-
-//     // Save uploaded files metadata in MongoDB
-//     const savedFiles = await Promise.all(
-//       uploadedFiles.map((file) =>
-//         File.create({
-//           filename: file.originalname,
-//           fileType: path.extname(file.originalname),
-//           filePath: file.path,
-//           uploadedBy: userId,
-//         })
-//       )
-//     );
-
-//     // Process files and merge content
-//     const mergedContent = await processFiles(uploadedFiles);
-
-//     // Generate final course file
-//     const courseFileName = `CourseFile-${Date.now()}.pdf`;
-//     const courseFilePath = path.join(UPLOADS_DIR, courseFileName);
-//     await generatePDF(mergedContent, courseFilePath);
-
-//     // Save generated course file metadata in MongoDB
-//     const courseFile = await File.create({
-//       filename: courseFileName,
-//       fileType: ".pdf",
-//       filePath: courseFilePath,
-//       uploadedBy: userId,
-//     });
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Course file generated successfully",
-//       courseFile,
-//       uploadedFiles: savedFiles,
-//     });
-//   } catch (error) {
-//     console.error("Error generating course file:", error);
-//     return res.status(500).json({ success: false, message: "Internal Server Error" });
-//   }
-// };
-
-// export const getUploadedFiles = async (req, res) => {
-//   try {
-//     const files = await File.find({ uploadedBy: req.user?._id }); // Fetch only user files
-
-//     // console.log("Fetched files from DB:", files); // ✅ Check if files are fetched
-
-//     return res.status(200).json({ success: true, files });
-//   } catch (error) {
-//     console.error("Error fetching files:", error);
-//     return res.status(500).json({ success: false, message: "Internal Server Error" });
-//   }
-// };
-
-// // Function to download course file
-
-// export const downloadCourseFile = async (req, res) => {
-//   try {
-//     const { fileId } = req.query;
-
-//     // ✅ Validate fileId as a MongoDB ObjectId
-//     if (!mongoose.Types.ObjectId.isValid(fileId)) {
-//       return res.status(400).json({ success: false, message: "Invalid file ID" });
-//     }
-
-//     // ✅ Find file in the database
-//     const file = await File.findById(fileId);
-//     if (!file) {
-//       return res.status(404).json({ success: false, message: "File not found" });
-//     }
-
-//     const absolutePath = path.resolve(file.filePath);
-
-//     // ✅ Check if file exists
-//     if (!fs.existsSync(absolutePath)) {
-//       return res.status(404).json({ success: false, message: "File does not exist" });
-//     }
-
-//     // ✅ Set correct headers for file download
-//     res.setHeader("Content-Type", "application/pdf");
-//     res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
-
-//     res.download(absolutePath, file.filename, (err) => {
-//       if (err) {
-//         console.error("Download error:", err);
-//         res.status(500).json({ success: false, message: "Failed to download file" });
-//       }
-//     });
-//   } catch (error) {
-//     console.error("Error downloading course file:", error);
-//     res.status(500).json({ success: false, message: "Internal Server Error" });
-//   }
-// };
-
+const UPLOADS_DIR = "./uploads"; 
 import { File } from "../models/File.js";
 import path from "path";
 import fs from "fs";
 
+
+let uploadedFilesList = []; // ✅ Store all uploaded files temporarily
+
 export const getFiles = async (req, res) => {
   try {
-    const files = await File.find({ uploadedBy: req.user?._id }); // Fetch only user files
-
-    // console.log("Fetched files from DB:", files); // ✅ Check if files are fetched
-
+    const files = await File.find({ uploadedBy: req.user?._id });
     return res.status(200).json({ success: true, files });
   } catch (error) {
     console.error("Error fetching files:", error);
@@ -135,32 +21,47 @@ export const getFiles = async (req, res) => {
 export const uploadFiles = async (req, res) => {
   try {
     const uploadedFiles = req.files;
-    const userId = req.user?._id; // Ensure user authentication
+    const userId = req.user?._id;
 
     if (!uploadedFiles || uploadedFiles.length === 0) {
       return res.status(400).json({ success: false, message: "No files uploaded" });
     }
 
-    // Save uploaded files metadata in MongoDB
-    const savedFiles = await Promise.all(
-      uploadedFiles.map((file) =>
-        File.create({
-          filename: file.originalname,
-          fileType: path.extname(file.originalname),
-          filePath: file.path,
-          uploadedBy: userId,
-        })
-      )
-    );
-    // Process files and merge content
-    const mergedContent = await processFiles(uploadedFiles);
+    // ✅ Store uploaded files temporarily
+    uploadedFilesList = [...uploadedFilesList, ...uploadedFiles];
 
-    // Generate final course file
-    const courseFileName = `CourseFile-${Date.now()}.pdf`;
+    return res.status(200).json({
+      success: true,
+      message: "Files uploaded successfully!",
+      uploadedFiles: uploadedFilesList,
+    });
+  } catch (error) {
+    console.error("Error uploading files:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+// ✅ New function to generate a single merged course file
+export const generateCourseFile = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+
+    if (uploadedFilesList.length === 0) {
+      return res.status(400).json({ success: false, message: "No files to generate course file" });
+    }
+
+    // ✅ Generate timestamp in "YYYY-MM-DD_HH-MM-SS" format
+    const now = new Date();
+    const formattedTimestamp = now.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+    // ✅ Process all uploaded files
+    const mergedContent = await processFiles(uploadedFilesList);
+
+    // ✅ Generate a single course file (PDF)
+    const courseFileName = `CourseFile_${formattedTimestamp}.pdf`;
     const courseFilePath = path.join(UPLOADS_DIR, courseFileName);
     await generatePDF(mergedContent, courseFilePath);
 
-    // Save generated course file metadata in MongoDB
+    // ✅ Save the generated course file in MongoDB
     const courseFile = await File.create({
       filename: courseFileName,
       fileType: ".pdf",
@@ -168,11 +69,13 @@ export const uploadFiles = async (req, res) => {
       uploadedBy: userId,
     });
 
+    // ✅ Clear uploaded files list after generating the course file
+    uploadedFilesList = [];
+
     return res.status(200).json({
       success: true,
       message: "Course file generated successfully",
       courseFile,
-      uploadedFiles: savedFiles,
     });
   } catch (error) {
     console.error("Error generating course file:", error);
@@ -180,28 +83,22 @@ export const uploadFiles = async (req, res) => {
   }
 };
 
-
 export const downloadFile = async (req, res) => {
   try {
     const { fileId } = req.params;
-
-    // Find file in database
     const file = await File.findById(fileId);
+
     if (!file) {
-      return res.status(404).json({ success: false, message: "File not found in database" });
+      return res.status(404).json({ success: false, message: "File not found" });
     }
 
-    // Construct absolute file path correctly
-    const filePath = path.join(process.cwd(), "uploads", file.filename); // Ensure it points to ./uploads
-
-    // Check if file exists in storage
+    const filePath = path.join(process.cwd(), "uploads", file.filename);
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ success: false, message: "File does not exist on the server" });
+      return res.status(404).json({ success: false, message: "File does not exist" });
     }
 
-    // Set response headers and send file for download
     res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
-    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader("Content-Type", "application/pdf");
 
     return res.download(filePath);
   } catch (error) {
