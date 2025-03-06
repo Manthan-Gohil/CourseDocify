@@ -5,8 +5,8 @@ import { File } from "../models/File.js";
 import path from "path";
 import fs from "fs";
 
-
 let uploadedFilesList = []; // ✅ Store all uploaded files temporarily
+let courseInfo = {}; // ✅ Store course details temporarily
 
 export const getFiles = async (req, res) => {
   try {
@@ -21,7 +21,6 @@ export const getFiles = async (req, res) => {
 export const uploadFiles = async (req, res) => {
   try {
     const uploadedFiles = req.files;
-    const userId = req.user?._id;
 
     if (!uploadedFiles || uploadedFiles.length === 0) {
       return res.status(400).json({ success: false, message: "No files uploaded" });
@@ -41,36 +40,44 @@ export const uploadFiles = async (req, res) => {
   }
 };
 
-// ✅ New function to generate a single merged course file
+// ✅ Save course details before generating the course file
+export const saveCourseInfo = (req, res) => {
+  const { courseName, courseCode, session, batch } = req.body;
+  if (!courseName || !courseCode || !session || !batch) {
+    return res.status(400).json({ success: false, message: "Missing course details" });
+  }
+
+  courseInfo = { courseName, courseCode, session, batch };
+  return res.status(200).json({ success: true, message: "Course details saved!" });
+};
+
+// ✅ Generate a single merged course file with course details, TOC, and file content
 export const generateCourseFile = async (req, res) => {
   try {
-    const userId = req.user?._id;
-
     if (uploadedFilesList.length === 0) {
       return res.status(400).json({ success: false, message: "No files to generate course file" });
     }
 
-    // ✅ Generate timestamp in "YYYY-MM-DD_HH-MM-SS" format
+    // ✅ Extract file content + page count
+    const processedFiles = await processFiles(uploadedFilesList);
+
+    // ✅ Generate a formatted merged PDF with TOC
     const now = new Date();
     const formattedTimestamp = now.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
-    // ✅ Process all uploaded files
-    const mergedContent = await processFiles(uploadedFilesList);
-
-    // ✅ Generate a single course file (PDF)
     const courseFileName = `CourseFile_${formattedTimestamp}.pdf`;
     const courseFilePath = path.join(UPLOADS_DIR, courseFileName);
-    await generatePDF(mergedContent, courseFilePath);
+    
+    await generatePDF(courseInfo, processedFiles, courseFilePath);
 
-    // ✅ Save the generated course file in MongoDB
+    // ✅ Save generated course file in MongoDB
     const courseFile = await File.create({
       filename: courseFileName,
       fileType: ".pdf",
       filePath: courseFilePath,
-      uploadedBy: userId,
+      uploadedBy: req.user._id,
     });
 
-    // ✅ Clear uploaded files list after generating the course file
-    uploadedFilesList = [];
+    uploadedFilesList = []; // Clear files after merging
 
     return res.status(200).json({
       success: true,
@@ -82,6 +89,7 @@ export const generateCourseFile = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
+
 
 export const downloadFile = async (req, res) => {
   try {
@@ -99,7 +107,6 @@ export const downloadFile = async (req, res) => {
 
     res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
     res.setHeader("Content-Type", "application/pdf");
-
     return res.download(filePath);
   } catch (error) {
     console.error("Error downloading file:", error);

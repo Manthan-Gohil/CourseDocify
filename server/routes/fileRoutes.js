@@ -8,10 +8,10 @@ const router = express.Router();
 // ✅ Fetch uploaded files
 router.get("/", isAuthenticated, getFiles);
 
-// ✅ Upload multiple files (without generating PDF immediately)
+// ✅ Upload multiple files
 router.post("/upload", isAuthenticated, upload.array("files", 10), uploadFiles);
 
-// ✅ Generate a single merged course file
+// ✅ Generate a single merged course file (new updated function)
 router.post("/generate-course-file", isAuthenticated, generateCourseFile);
 
 // ✅ Download the generated course file

@@ -25,15 +25,15 @@ const processDOCX = async (filePath) => {
   return value;
 };
 
-// Function to merge content from uploaded files
+// ✅ Extract file data & calculate page count
 export const processFiles = async (files) => {
-  let mergedContent = "";
+  let processedFiles = [];
 
   for (const file of files) {
     const filePath = file.path;
     const ext = path.extname(file.originalname).toLowerCase();
     let fileData = "";
-
+    
     if (ext === ".xlsx" || ext === ".xls") {
       fileData = JSON.stringify(await processExcel(filePath), null, 2);
     } else if (ext === ".pdf") {
@@ -44,9 +44,8 @@ export const processFiles = async (files) => {
       fileData = fs.readFileSync(filePath, "utf-8");
     }
 
-    mergedContent += `\n\n=== ${file.originalname} ===\n${fileData}`;
+    processedFiles.push({ title: file.originalname, content: fileData, pageCount: Math.ceil(fileData.length / 2000) });
   }
 
-  return mergedContent;
+  return processedFiles;
 };
-
