@@ -12,8 +12,10 @@ router.post("/generate", isAuthenticated, async (req, res) => {
     const { courseName, courseCode, session, batch } = req.body;
     const username = req.user.fullname; // Get logged-in user's name
     // console.log(req.user);
-    
-    const fileName = `CourseSummary-${Date.now()}.pdf`;
+    // ✅ Generate timestamp in "YYYY-MM-DD_HH-MM-SS" format
+    const now = new Date();
+    const formattedTimestamp = now.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
+    const fileName = `CourseSummary_${formattedTimestamp}.pdf`;
     const filePath = path.join("./uploads", fileName);
 
     // Create PDF Document

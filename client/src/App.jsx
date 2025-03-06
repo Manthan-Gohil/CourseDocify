@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/Authcontext";
 import Upload from "./pages/Upload";
 import CourseDetailsForm from "./pages/CourseDetailForm";  // Import CourseDetailForm
+import FileTable from "./components/FileTable";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
             } 
           />
           <Route path="/upload" element={<Upload />} />
+          <Route path="/fileupload" element={<FileTable />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
