@@ -27,7 +27,14 @@ export const uploadFiles = async (req, res) => {
     }
 
     // ✅ Store uploaded files temporarily
-    uploadedFilesList = [...uploadedFilesList, ...uploadedFiles];
+    uploadedFilesList = [ ...uploadedFilesList,
+      ...uploadedFiles.map((file) => ({
+        originalName: file.originalname, // Extract original file name
+        storedName: file.filename, // Extract renamed file name
+        path: file.path, // Path where file is saved
+      })),];
+
+      console.log(uploadedFilesList);
 
     return res.status(200).json({
       success: true,
@@ -58,18 +65,18 @@ export const generateCourseFile = async (req, res) => {
       return res.status(400).json({ success: false, message: "No files to generate course file" });
     }
 
-    // ✅ Extract file content + page count
-    const processedFiles = await processFiles(uploadedFilesList);
+    const uploadedFilePaths = uploadedFilesList.map(file => ({
+      originalName: file.originalName,  // Store original file name
+      path: file.path,                  // Store correct file path
+    }));
 
-    // ✅ Generate a formatted merged PDF with TOC
     const now = new Date();
     const formattedTimestamp = now.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
     const courseFileName = `CourseFile_${formattedTimestamp}.pdf`;
     const courseFilePath = path.join(UPLOADS_DIR, courseFileName);
-    
-    await generatePDF(courseInfo, processedFiles, courseFilePath);
 
-    // ✅ Save generated course file in MongoDB
+    await generatePDF(req, courseInfo, uploadedFilePaths, courseFilePath);
+
     const courseFile = await File.create({
       filename: courseFileName,
       fileType: ".pdf",
@@ -77,7 +84,7 @@ export const generateCourseFile = async (req, res) => {
       uploadedBy: req.user._id,
     });
 
-    uploadedFilesList = []; // Clear files after merging
+    uploadedFilesList = [];
 
     return res.status(200).json({
       success: true,
