@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchFiles, downloadFile } from "../services/fileServices";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const FileTable = ({ files: propFiles, loading, refreshFiles }) => {
   const [files, setFiles] = useState([]);
@@ -231,19 +232,21 @@ const FileTable = ({ files: propFiles, loading, refreshFiles }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               </svg>
               <p className="mt-4 text-gray-500">No files uploaded yet.</p>
+              <Link to={"/upload"}>
               <motion.button
                 variants={buttonVariants}
                 initial="initial"
                 whileHover="hover"
                 whileTap="tap"
                 className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm inline-flex items-center"
-                onClick={() => window.location.href = '/upload'}
+                
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
                 Upload Files
               </motion.button>
+              </Link>
             </motion.div>
           </div>
         )}
