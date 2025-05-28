@@ -90,7 +90,7 @@ npm run dev
 
 # Open another terminal and start frontend
 cd ../frontend
-npm start
+npm run dev
 ```
 ---
 
