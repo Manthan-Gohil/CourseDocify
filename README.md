@@ -104,6 +104,22 @@ npm run dev
 
 ---
 
+---
+
+## 🚀 Deployment
+
+CourseDocify is deployed using modern, scalable platforms to ensure high availability and performance.
+
+### 🔷 Frontend Deployment
+- Hosted on [Vercel](https://vercel.com/) for fast, serverless rendering and seamless CI/CD.
+
+### 🟪 Backend Deployment
+- Hosted on [Render](https://render.com/) with persistent connections to MongoDB Atlas.
+- 
+> All frontend-backend communication is secured via HTTPS and uses JSON Web Tokens (JWT) for session management.
+
+
+
 ## ✨ Contributors
 
 - **Manthan Gohil** – [GitHub Profile](https://github.com/Manthan-Gohil)
